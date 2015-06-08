@@ -47,6 +47,9 @@ loop(S = #state{}) ->
       Pid ! {MsgRef, ok},
       loop(S#state{events=Events});
 
+    {'DOWN', Ref, process, _Pid, _Reason} ->
+      loop(S#state{clients=orddict:erase(Ref, S#state.clients)});
+
     %for event
     {done, Name} ->
       case orddict:find(Name, S#state.events) of
@@ -59,12 +62,8 @@ loop(S = #state{}) ->
       end;
 
     %for self
-    {shutdown} ->
+    shutdown ->
       exit(shutdown);
-
-    %
-    {'DOWN', Ref, process, _Pid, _Reason} ->
-      loop(S#state{clients=orddict:erase(Ref, S#state.clients)});
 
     code_change ->
       ?MODULE:loop(S);
