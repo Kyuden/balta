@@ -23,7 +23,7 @@ loop(S = #state{}) ->
     {Pid, MsgRef, {add, Name, Description, TimeOut}} ->
       case valid_datetime(TimeOut) of
         true ->
-          EventPid = event:start_link(Name, TimeOut),
+          EventPid = balta_event:start_link(Name, TimeOut),
           NewEvents = orddict:store(Name, #event{name=Name,
                                                  description=Description,
                                                  pid=EventPid,
@@ -39,7 +39,7 @@ loop(S = #state{}) ->
     {Pid, MsgRef, {cancel, Name}} ->
       Events = case orddict:find(Name, S#state.events) of
                  {ok, E} ->
-                   event:cancel(E#event.pid),
+                   balta_event:cancel(E#event.pid),
                    orddict:erase(Name, S#state.events);
                  error ->
                    S#state.events
