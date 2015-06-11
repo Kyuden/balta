@@ -57,7 +57,6 @@ listen(Delay) ->
     []
   end.
 
-
 init() ->
   loop(#state{events=orddict:new(),
               clients=orddict:new()}).
